@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DATUM Savings Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .animate-highlight {
+            animation: highlight 1s ease-out;
+        }
+        @keyframes highlight {
+            0% { background-color: #fefcbf; transform: scale(1); }
+            50% { background-color: #fefcbf; transform: scale(1.05); }
+            100% { background-color: transparent; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">DATUM Savings Calculator</h1>
+            <p class="text-gray-600 mt-2">See how much you can save on diesel delivery with DATUM.</p>
+        </div>
+
+        <!-- Inputs Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div>
+                <label for="distance" class="block text-sm font-medium text-gray-700 mb-1">Distance (Kms)</label>
+                <input type="number" id="distance" value="20" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 20">
+            </div>
+            <div>
+                <label for="totalVolume" class="block text-sm font-medium text-gray-700 mb-1">Total Volume (Litres)</label>
+                <input type="number" id="totalVolume" value="21000" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 21000">
+            </div>
+            <div>
+                <label for="dieselPrice" class="block text-sm font-medium text-gray-700 mb-1">Diesel Price (per Litre)</label>
+                <input type="number" id="dieselPrice" value="90" step="0.01" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 90">
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Without DATUM Card -->
+            <div class="bg-gray-100 p-6 rounded-xl border border-gray-200">
+                <h2 class="text-xl font-bold text-center mb-4 text-gray-800">Without DATUM</h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">MOQ (Litres)</span>
+                        <span id="moqWithout" class="font-semibold text-lg">700</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Number of Trips</span>
+                        <span id="tripsWithout" class="font-semibold text-lg">0</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Cost per Trip</span>
+                        <span id="costPerTripWithout" class="font-semibold text-lg">₹0</span>
+                    </div>
+                    <hr class="my-3 border-gray-300">
+                    <div class="flex justify-between items-center text-red-600">
+                        <span class="font-bold text-lg">Total Cost</span>
+                        <span id="totalCostWithout" class="font-bold text-2xl">₹0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- With DATUM Card -->
+            <div class="bg-blue-50 p-6 rounded-xl border-2 border-blue-500">
+                <h2 class="text-xl font-bold text-center mb-4 text-blue-800">With DATUM</h2>
+                 <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">MOQ (Litres)</span>
+                        <span id="moqWith" class="font-semibold text-lg">2000</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Number of Trips</span>
+                        <span id="tripsWith" class="font-semibold text-lg">0</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Cost per Trip</span>
+                        <span id="costPerTripWith" class="font-semibold text-lg">₹0</span>
+                    </div>
+                    <hr class="my-3 border-blue-200">
+                    <div class="flex justify-between items-center text-green-600">
+                        <span class="font-bold text-lg">Total Cost</span>
+                        <span id="totalCostWith" class="font-bold text-2xl">₹0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Savings Section -->
+        <div class="space-y-6">
+            <!-- Gross Savings -->
+            <div class="bg-green-50 p-4 rounded-lg flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-green-800">Gross Savings</h3>
+                <p id="grossSavings" class="text-2xl font-bold text-green-800">₹0</p>
+            </div>
+
+            <!-- Platform Fee Input -->
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+                 <label for="platformFee" class="block text-sm font-medium text-gray-700 whitespace-nowrap">Platform Fee (per Litre)</label>
+                 <input type="number" id="platformFee" value="0.5" step="0.01" class="w-full sm:w-auto p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 0.5">
+            </div>
+
+            <!-- Net Savings -->
+            <div class="bg-blue-100 p-6 rounded-xl text-center shadow-inner">
+                <h3 class="text-xl font-semibold text-blue-900 mb-2">Your Final Net Savings</h3>
+                <p id="netSavings" class="text-4xl sm:text-5xl font-extrabold text-blue-900">₹0</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const distanceInput = document.getElementById('distance');
+        const totalVolumeInput = document.getElementById('totalVolume');
+        const dieselPriceInput = document.getElementById('dieselPrice');
+        const platformFeeInput = document.getElementById('platformFee');
+
+        // Without DATUM elements
+        const moqWithoutEl = document.getElementById('moqWithout');
+        const tripsWithoutEl = document.getElementById('tripsWithout');
+        const costPerTripWithoutEl = document.getElementById('costPerTripWithout');
+        const totalCostWithoutEl = document.getElementById('totalCostWithout');
+
+        // With DATUM elements
+        const tripsWithEl = document.getElementById('tripsWith');
+        const costPerTripWithEl = document.getElementById('costPerTripWith');
+        const totalCostWithEl = document.getElementById('totalCostWith');
+
+        // Savings elements
+        const grossSavingsEl = document.getElementById('grossSavings');
+        const netSavingsEl = document.getElementById('netSavings');
+
+        // --- Constants from the model ---
+        const TRUCK_MILEAGE_KMPL = 5; // Assumed truck mileage in km per litre
+        const OTHER_OPERATING_COST_PER_KM = 1; // Assumed other costs (driver, maintenance) per km
+        const MOQ_WITH_DATUM = 2000;
+
+        // --- Calculation Logic ---
+        function calculate() {
+            const distance = parseFloat(distanceInput.value) || 0;
+            const totalVolume = parseFloat(totalVolumeInput.value) || 0;
+            const dieselPrice = parseFloat(dieselPriceInput.value) || 0;
+            const platformFee = parseFloat(platformFeeInput.value) || 0;
+
+            // --- Dynamic cost per km ---
+            const fuelCostPerKm = TRUCK_MILEAGE_KMPL > 0 ? dieselPrice / TRUCK_MILEAGE_KMPL : 0;
+            const dynamicCostPerKm = fuelCostPerKm + OTHER_OPERATING_COST_PER_KM;
+
+            // --- Calculations for "Without DATUM" ---
+            const moqWithout = totalVolume > 0 ? totalVolume / 30 : 0;
+            const tripsWithout = totalVolume > 0 ? 30 : 0;
+            const costPerTripWithout = distance * 2 * dynamicCostPerKm;
+            const totalCostWithout = tripsWithout * costPerTripWithout;
+
+            // --- Calculations for "With DATUM" ---
+            const tripsWith = totalVolume > 0 ? Math.ceil(totalVolume / MOQ_WITH_DATUM) : 0;
+            const costPerTripWith = distance * 2 * dynamicCostPerKm; // Cost per trip is the same
+            const totalCostWith = tripsWith * costPerTripWith;
+
+            // --- Savings Calculations ---
+            const grossSavings = totalCostWithout - totalCostWith;
+            const platformFeeCost = totalVolume * platformFee;
+            const netSavings = grossSavings - platformFeeCost;
+
+            // --- Update UI ---
+            updateUI({
+                moqWithout,
+                tripsWithout,
+                costPerTripWithout,
+                totalCostWithout,
+                tripsWith,
+                costPerTripWith,
+                totalCostWith,
+                grossSavings,
+                netSavings
+            });
+        }
+        
+        // --- UI Update Logic ---
+        function updateUI(values) {
+            const formatter = new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0,
+            });
+
+            // Update "Without DATUM" card
+            moqWithoutEl.textContent = Math.ceil(values.moqWithout).toLocaleString('en-IN');
+            tripsWithoutEl.textContent = values.tripsWithout.toLocaleString('en-IN');
+            costPerTripWithoutEl.textContent = formatter.format(values.costPerTripWithout);
+            totalCostWithoutEl.textContent = formatter.format(values.totalCostWithout);
+
+            // Update "With DATUM" card
+            tripsWithEl.textContent = values.tripsWith.toLocaleString('en-IN');
+            costPerTripWithEl.textContent = formatter.format(values.costPerTripWith);
+            totalCostWithEl.textContent = formatter.format(values.totalCostWith);
+            
+            // Update Savings
+            grossSavingsEl.textContent = formatter.format(values.grossSavings);
+            netSavingsEl.textContent = formatter.format(values.netSavings);
+            
+            // Highlight the final savings
+            highlightElement(netSavingsEl);
+        }
+        
+        // --- Helper function to add a highlight animation ---
+        function highlightElement(el) {
+            el.classList.remove('animate-highlight');
+            // This is a trick to restart the animation
+            void el.offsetWidth; 
+            el.classList.add('animate-highlight');
+        }
+
+        // --- Event Listeners ---
+        distanceInput.addEventListener('input', calculate);
+        totalVolumeInput.addEventListener('input', calculate);
+        dieselPriceInput.addEventListener('input', calculate);
+        platformFeeInput.addEventListener('input', calculate);
+
+        // --- Initial Calculation on Load ---
+        window.addEventListener('load', calculate);
+    </script>
+</body>
+</html>
+
