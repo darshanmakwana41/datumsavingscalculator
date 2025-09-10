@@ -22,7 +22,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+    <div class="w-full max-w-5xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
         
         <!-- Header -->
         <div class="text-center mb-8">
@@ -31,7 +31,7 @@
         </div>
 
         <!-- Inputs Section -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div>
                 <label for="distance" class="block text-sm font-medium text-gray-700 mb-1">Distance (Kms)</label>
                 <input type="number" id="distance" value="20" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 20">
@@ -39,6 +39,10 @@
             <div>
                 <label for="totalVolume" class="block text-sm font-medium text-gray-700 mb-1">Total Volume (Litres)</label>
                 <input type="number" id="totalVolume" value="21000" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 21000">
+            </div>
+             <div>
+                <label for="frequency" class="block text-sm font-medium text-gray-700 mb-1">Frequency (Trips/Month)</label>
+                <input type="number" id="frequency" value="4" class="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 4">
             </div>
             <div>
                 <label for="dieselPrice" class="block text-sm font-medium text-gray-700 mb-1">Diesel Price (per Litre)</label>
@@ -53,8 +57,8 @@
                 <h2 class="text-xl font-bold text-center mb-4 text-gray-800">Without DATUM</h2>
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-600">MOQ (Litres)</span>
-                        <span id="moqWithout" class="font-semibold text-lg">700</span>
+                        <span class="text-gray-600">Avg. Litres per Trip</span>
+                        <span id="moqWithout" class="font-semibold text-lg">0</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Number of Trips</span>
@@ -123,6 +127,7 @@
         // --- DOM Elements ---
         const distanceInput = document.getElementById('distance');
         const totalVolumeInput = document.getElementById('totalVolume');
+        const frequencyInput = document.getElementById('frequency');
         const dieselPriceInput = document.getElementById('dieselPrice');
         const platformFeeInput = document.getElementById('platformFee');
 
@@ -150,6 +155,7 @@
         function calculate() {
             const distance = parseFloat(distanceInput.value) || 0;
             const totalVolume = parseFloat(totalVolumeInput.value) || 0;
+            const frequency = parseFloat(frequencyInput.value) || 0;
             const dieselPrice = parseFloat(dieselPriceInput.value) || 0;
             const platformFee = parseFloat(platformFeeInput.value) || 0;
 
@@ -158,8 +164,8 @@
             const dynamicCostPerKm = fuelCostPerKm + OTHER_OPERATING_COST_PER_KM;
 
             // --- Calculations for "Without DATUM" ---
-            const moqWithout = totalVolume > 0 ? totalVolume / 30 : 0;
-            const tripsWithout = totalVolume > 0 ? 30 : 0;
+            const tripsWithout = frequency;
+            const moqWithout = frequency > 0 ? totalVolume / frequency : 0;
             const costPerTripWithout = distance * 2 * dynamicCostPerKm;
             const totalCostWithout = tripsWithout * costPerTripWithout;
 
@@ -225,6 +231,7 @@
         // --- Event Listeners ---
         distanceInput.addEventListener('input', calculate);
         totalVolumeInput.addEventListener('input', calculate);
+        frequencyInput.addEventListener('input', calculate);
         dieselPriceInput.addEventListener('input', calculate);
         platformFeeInput.addEventListener('input', calculate);
 
